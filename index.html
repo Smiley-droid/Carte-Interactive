@@ -12,13 +12,14 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
         #map { height: 100vh; }
-        #controls { position: absolute; top: 10px; left: 10px; background: white; padding: 10px; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); }
-        #xp-counter { font-weight: bold; }
+        #controls { position: absolute; top: 10px; left: 10px; background: white; padding: 10px; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 1000; }
+        #xp-counter { font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
 
     <div id="controls">
+        <p><strong>XP :</strong> <span id="xp-counter">0</span></p>
         <label for="mapStyle">Style de carte :</label>
         <select id="mapStyle">
             <option value="streets-v11">Standard</option>
@@ -26,7 +27,6 @@
             <option value="dark-v10">Sombre</option>
             <option value="satellite-streets-v11">Satellite</option>
         </select>
-        <p>XP : <span id="xp-counter">0</span></p>
     </div>
 
     <div id="map"></div>
