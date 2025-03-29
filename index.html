@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carte Interactive</title>
 
-    <!-- Leaflet.js (Compatible avec Mapbox) -->
+    <!-- Leaflet.js (Compatible avec OpenStreetMap) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -22,33 +22,27 @@
         <p><strong>XP :</strong> <span id="xp-counter">0</span></p>
         <label for="mapStyle">Style de carte :</label>
         <select id="mapStyle">
-            <option value="streets-v11">Standard</option>
-            <option value="navigation-day-v1">Clair</option>
-            <option value="dark-v10">Sombre</option>
-            <option value="satellite-streets-v11">Satellite</option>
+            <option value="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png">Standard</option>
+            <option value="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png">Topographique</option>
+            <option value="https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png">Noir & Blanc</option>
         </select>
     </div>
 
     <div id="map"></div>
 
     <script>
-        var accessToken = "TON_ACCESS_TOKEN";
         var xp = 0;
-
         var map = L.map('map').setView([48.8566, 2.3522], 13);
-        var tileLayer = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
-            attribution: '&copy; Mapbox & OpenStreetMap contributors',
-            tileSize: 512,
-            zoomOffset: -1
+
+        var tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
         document.getElementById("mapStyle").addEventListener("change", function() {
             var style = this.value;
             map.removeLayer(tileLayer);
-            tileLayer = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/${style}/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
-                attribution: '&copy; Mapbox & OpenStreetMap contributors',
-                tileSize: 512,
-                zoomOffset: -1
+            tileLayer = L.tileLayer(style, {
+                attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
         });
 
