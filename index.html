@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Carte interactive</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    #map { height: 500px; }
+  </style>
+</head>
+<body>
+  <h2>XP : <span id="xp">0</span></h2>
+  <div id="map"></div>
+
+  <script>
+    var map = L.map('map').setView([48.8566, 2.3522], 13); // Position par défaut (Paris)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    var playerMarker = L.marker([48.8566, 2.3522]).addTo(map).bindPopup("Vous êtes ici");
+
+    // Liste des quêtes basées sur la position
+    var quetes = [
+      { nom: "Tour Eiffel", lat: 48.8584, lon: 2.2945, xp: 20, trouvée: false },
+      { nom: "Louvre", lat: 48.8606, lon: 2.3376, xp: 30, trouvée: false }
+    ];
+
+    // Définir les marqueurs des quêtes
+    quetes.forEach(quete => {
+      L.marker([quete.lat, quete.lon]).addTo(map).bindPopup("Quête : " + quete.nom);
+    });
+
+    // XP et distance
+    var xp = 0;
+    var dernierePosition = null;
+
+    function ajouterXP(amount) {
+      xp += amount;
+      document.getElementById("xp").innerText = xp;
+    }
+
+    function verifierQuetesEtDistance(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+
+      // Mettre à jour la position du joueur
+      playerMarker.setLatLng([lat, lon]).bindPopup("Vous êtes ici").openPopup();
+      map.setView([lat, lon], 13);
+
+      // Vérifier les quêtes de lieu
+      quetes.forEach(quete => {
+        if (!quete.trouvée) {
+          var distance = Math.sqrt(Math.pow(lat - quete.lat, 2) + Math.pow(lon - quete.lon, 2));
+          if (distance < 0.002) { // Rayon d'environ 200m
+            quete.trouvée = true;
+            ajouterXP(quete.xp);
+            alert("Quête complétée : " + quete.nom + " (+ " + quete.xp + " XP)");
+          }
+        }
+      });
+
+      // Calculer la distance parcourue
+      if (dernierePosition) {
+        var dx = lat - dernierePosition.latitude;
+        var dy = lon - dernierePosition.longitude;
+        var distanceParcourue = Math.sqrt(dx * dx + dy * dy) * 111000; // Conversion en mètres
+
+        if (distanceParcourue > 10) { // Si on a parcouru +10m
+          ajouterXP(5);
+        }
+      }
+      dernierePosition = { latitude: lat, longitude: lon };
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(verifierQuetesEtDistance);
+    } else {
+      alert("La géolocalisation n'est pas supportée sur ce navigateur.");
+    }
+  </script>
+</body>
+</html>
