@@ -1,81 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>Carte interactive</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <style>
-    #map { height: 500px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Interactive</title>
+
+    <!-- Leaflet.js (Compatible avec Mapbox) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
+        #map { height: 100vh; }
+        #controls { position: absolute; top: 10px; left: 10px; background: white; padding: 10px; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); }
+        #xp-counter { font-weight: bold; }
+    </style>
 </head>
 <body>
-  <h2>XP : <span id="xp">0</span></h2>
-  <div id="map"></div>
 
-  <script>
-    var map = L.map('map').setView([48.8566, 2.3522], 13); // Position par défaut (Paris)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    <div id="controls">
+        <label for="mapStyle">Style de carte :</label>
+        <select id="mapStyle">
+            <option value="streets-v11">Standard</option>
+            <option value="navigation-day-v1">Clair</option>
+            <option value="dark-v10">Sombre</option>
+            <option value="satellite-streets-v11">Satellite</option>
+        </select>
+        <p>XP : <span id="xp-counter">0</span></p>
+    </div>
 
-    var playerMarker = L.marker([48.8566, 2.3522]).addTo(map).bindPopup("Vous êtes ici");
+    <div id="map"></div>
 
-    // Liste des quêtes basées sur la position
-    var quetes = [
-      { nom: "Tour Eiffel", lat: 48.8584, lon: 2.2945, xp: 20, trouvée: false },
-      { nom: "Louvre", lat: 48.8606, lon: 2.3376, xp: 30, trouvée: false }
-    ];
+    <script>
+        var accessToken = "TON_ACCESS_TOKEN";
+        var xp = 0;
 
-    // Définir les marqueurs des quêtes
-    quetes.forEach(quete => {
-      L.marker([quete.lat, quete.lon]).addTo(map).bindPopup("Quête : " + quete.nom);
-    });
+        var map = L.map('map').setView([48.8566, 2.3522], 13);
+        var tileLayer = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
+            attribution: '&copy; Mapbox & OpenStreetMap contributors',
+            tileSize: 512,
+            zoomOffset: -1
+        }).addTo(map);
 
-    // XP et distance
-    var xp = 0;
-    var dernierePosition = null;
+        document.getElementById("mapStyle").addEventListener("change", function() {
+            var style = this.value;
+            map.removeLayer(tileLayer);
+            tileLayer = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/${style}/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
+                attribution: '&copy; Mapbox & OpenStreetMap contributors',
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(map);
+        });
 
-    function ajouterXP(amount) {
-      xp += amount;
-      document.getElementById("xp").innerText = xp;
-    }
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    function (position) {
+                        var userLat = position.coords.latitude;
+                        var userLng = position.coords.longitude;
 
-    function verifierQuetesEtDistance(position) {
-      var lat = position.coords.latitude;
-      var lon = position.coords.longitude;
+                        L.marker([userLat, userLng]).addTo(map)
+                            .bindPopup("Vous êtes ici")
+                            .openPopup();
 
-      // Mettre à jour la position du joueur
-      playerMarker.setLatLng([lat, lon]).bindPopup("Vous êtes ici").openPopup();
-      map.setView([lat, lon], 13);
-
-      // Vérifier les quêtes de lieu
-      quetes.forEach(quete => {
-        if (!quete.trouvée) {
-          var distance = Math.sqrt(Math.pow(lat - quete.lat, 2) + Math.pow(lon - quete.lon, 2));
-          if (distance < 0.002) { // Rayon d'environ 200m
-            quete.trouvée = true;
-            ajouterXP(quete.xp);
-            alert("Quête complétée : " + quete.nom + " (+ " + quete.xp + " XP)");
-          }
+                        map.setView([userLat, userLng], 15);
+                    },
+                    function (error) {
+                        console.log("Erreur GPS : ", error);
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                alert("La géolocalisation n'est pas supportée par votre navigateur.");
+            }
         }
-      });
-
-      // Calculer la distance parcourue
-      if (dernierePosition) {
-        var dx = lat - dernierePosition.latitude;
-        var dy = lon - dernierePosition.longitude;
-        var distanceParcourue = Math.sqrt(dx * dx + dy * dy) * 111000; // Conversion en mètres
-
-        if (distanceParcourue > 10) { // Si on a parcouru +10m
-          ajouterXP(5);
-        }
-      }
-      dernierePosition = { latitude: lat, longitude: lon };
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(verifierQuetesEtDistance);
-    } else {
-      alert("La géolocalisation n'est pas supportée sur ce navigateur.");
-    }
-  </script>
+        getLocation();
+    </script>
 </body>
 </html>
