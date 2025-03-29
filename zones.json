@@ -1,0 +1,82 @@
+{
+    "France": {
+        "coordinates": [[48.86, 2.33], [48.87, 2.35], [48.85, 2.38]],
+        "xpRequired": 0
+    },
+    "Espagne": {
+        "coordinates": [[40.5, -3.5], [40.6, -3.6], [40.4, -3.7]],
+        "xpRequired": 100
+    },
+    "Allemagne": {
+        "coordinates": [[52.5, 13.4], [52.6, 13.5], [52.4, 13.3]],
+        "xpRequired": 200
+    },
+    "Italie": {
+        "coordinates": [[41.9, 12.5], [42.0, 12.6], [41.8, 12.4]],
+        "xpRequired": 300
+    },
+    "Royaume-Uni": {
+        "coordinates": [[51.5, -0.1], [51.6, -0.2], [51.4, 0.0]],
+        "xpRequired": 400
+    },
+    "États-Unis": {
+        "coordinates": [[38.9, -77.0], [39.0, -77.1], [38.8, -76.9]],
+        "xpRequired": 500
+    },
+    "Canada": {
+        "coordinates": [[45.4, -75.7], [45.5, -75.8], [45.3, -75.6]],
+        "xpRequired": 600
+    },
+    "Brésil": {
+        "coordinates": [[-15.8, -47.9], [-15.7, -48.0], [-15.9, -47.8]],
+        "xpRequired": 700
+    },
+    "Argentine": {
+        "coordinates": [[-34.6, -58.4], [-34.5, -58.3], [-34.7, -58.5]],
+        "xpRequired": 750
+    },
+    "Mexique": {
+        "coordinates": [[19.4, -99.1], [19.5, -99.0], [19.3, -99.2]],
+        "xpRequired": 800
+    },
+    "Russie": {
+        "coordinates": [[55.7, 37.6], [55.8, 37.7], [55.6, 37.5]],
+        "xpRequired": 850
+    },
+    "Chine": {
+        "coordinates": [[39.9, 116.4], [40.0, 116.5], [39.8, 116.3]],
+        "xpRequired": 900
+    },
+    "Japon": {
+        "coordinates": [[35.6, 139.7], [35.7, 139.8], [35.5, 139.6]],
+        "xpRequired": 950
+    },
+    "Corée du Sud": {
+        "coordinates": [[37.5, 127.0], [37.6, 127.1], [37.4, 126.9]],
+        "xpRequired": 1000
+    },
+    "Australie": {
+        "coordinates": [[-33.9, 151.2], [-33.8, 151.3], [-34.0, 151.1]],
+        "xpRequired": 1050
+    },
+    "Inde": {
+        "coordinates": [[28.6, 77.2], [28.7, 77.3], [28.5, 77.1]],
+        "xpRequired": 1100
+    },
+    "Afrique du Sud": {
+        "coordinates": [[-25.7, 28.2], [-25.6, 28.3], [-25.8, 28.1]],
+        "xpRequired": 1150
+    },
+    "Égypte": {
+        "coordinates": [[30.0, 31.2], [30.1, 31.3], [29.9, 31.1]],
+        "xpRequired": 1200
+    },
+    "Turquie": {
+        "coordinates": [[41.0, 28.9], [41.1, 29.0], [40.9, 28.8]],
+        "xpRequired": 1250
+    },
+    "Indonésie": {
+        "coordinates": [[-6.2, 106.8], [-6.1, 106.9], [-6.3, 106.7]],
+        "xpRequired": 1300
+    }
+}
