@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Carte Interactive</title>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -16,9 +16,13 @@
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            z-index: 10000;
         }
-        #map { height: 100vh; z-index: 0; }
+        #map { height: 100vh; width: 100vw; z-index: 0; }
+        @media (max-width: 768px) {
+            #menu { width: auto; font-size: 14px; padding: 8px; }
+            #map { height: 100vh; }
+        }
     </style>
 </head>
 <body>
@@ -36,7 +40,24 @@
         let xp = 0;
         document.getElementById("xp").innerText = xp;
         
-        let map = L.map('map').setView([48.86, 2.33], 5);
+        function detectDevice() {
+            if (window.innerWidth <= 768) {
+                document.getElementById("menu").style.fontSize = "14px";
+            } else {
+                document.getElementById("menu").style.fontSize = "16px";
+            }
+        }
+        
+        window.addEventListener("resize", detectDevice);
+        detectDevice();
+
+        let map = L.map('map', {
+            center: [48.86, 2.33],
+            zoom: 5,
+            tap: false,
+            preferCanvas: true // Améliore les performances sur mobile
+        });
+        
         let tileLayers = {
             standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map),
             topographique: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: '© OpenTopoMap' })
