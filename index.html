@@ -33,6 +33,7 @@
             <option value="standard">Standard</option>
             <option value="topographique">Topographique</option>
         </select>
+        <button id="locateMe">Me localiser</button>
     </div>
     <div id="map"></div>
     
@@ -55,7 +56,7 @@
             center: [48.86, 2.33],
             zoom: 5,
             tap: false,
-            preferCanvas: true // Améliore les performances sur mobile
+            preferCanvas: true
         });
         
         let tileLayers = {
@@ -69,6 +70,27 @@
             });
             tileLayers[e.target.value].addTo(map);
         });
+
+        // Ajout de la localisation de l'utilisateur avec bouton
+        function locateUser() {
+            map.locate({setView: true, maxZoom: 16, watch: true});
+        }
+
+        function onLocationFound(e) {
+            let radius = e.accuracy / 2;
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("Vous êtes ici !").openPopup();
+            L.circle(e.latlng, radius).addTo(map);
+            map.setView(e.latlng, 13);
+        }
+
+        function onLocationError(e) {
+            alert("Localisation non disponible : " + e.message);
+        }
+
+        document.getElementById("locateMe").addEventListener("click", locateUser);
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
 
         fetch('zones.json')
             .then(response => response.json())
