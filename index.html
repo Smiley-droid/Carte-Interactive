@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Carte Interactive</title>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -22,6 +21,7 @@
         #map { height: 100vh; width: 100vw; z-index: 0; }
         @media (max-width: 768px) {
             #menu { width: auto; font-size: 14px; padding: 8px; }
+            #map { height: 100vh; }
         }
     </style>
 </head>
@@ -35,11 +35,9 @@
         </select>
         <button id="locateMe">Me localiser</button>
     </div>
-
     <div id="map"></div>
-
+    
     <script>
-        // Détection mobile/desktop pour adapter le style
         function detectDevice() {
             if (window.innerWidth <= 768) {
                 document.getElementById("menu").style.fontSize = "14px";
@@ -47,30 +45,22 @@
                 document.getElementById("menu").style.fontSize = "16px";
             }
         }
-
+        
         window.addEventListener("resize", detectDevice);
         detectDevice();
 
-        // Initialisation de la carte
         let map = L.map('map', {
-            center: [48.86, 2.33], // Paris par défaut
+            center: [48.86, 2.33],
             zoom: 5,
             tap: false,
             preferCanvas: true
         });
-
-        // Couches de tuiles (styles)
+        
         let tileLayers = {
-            standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map),
-
-            topographique: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenTopoMap'
-            })
+            standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map),
+            topographique: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: '© OpenTopoMap' })
         };
 
-        // Changement de style
         document.getElementById("mapStyle").addEventListener("change", function(e) {
             map.eachLayer(layer => {
                 if (layer instanceof L.TileLayer) map.removeLayer(layer);
@@ -78,16 +68,24 @@
             tileLayers[e.target.value].addTo(map);
         });
 
-        // Localisation utilisateur
+        // Localisation utilisateur (sans accumulation)
+        let userMarker = null;
+        let userCircle = null;
+
         function locateUser() {
-            map.locate({setView: true, maxZoom: 16, watch: true});
+            map.locate({ setView: true, maxZoom: 16 });
         }
 
         function onLocationFound(e) {
             let radius = e.accuracy / 2;
-            L.marker(e.latlng).addTo(map)
+
+            if (userMarker) map.removeLayer(userMarker);
+            if (userCircle) map.removeLayer(userCircle);
+
+            userMarker = L.marker(e.latlng).addTo(map)
                 .bindPopup("Vous êtes ici !").openPopup();
-            L.circle(e.latlng, radius).addTo(map);
+            userCircle = L.circle(e.latlng, radius).addTo(map);
+
             map.setView(e.latlng, 13);
         }
 
